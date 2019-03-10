@@ -1,0 +1,9 @@
+pcp_pkgs:
+  - pcp-zeroconf
+
+pcp_services:
+  - pmcd
+  - pmlogger
+pcp_web_pkgs:
+  - pcp-webapi
+  - pcp-webjs

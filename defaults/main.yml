@@ -1,0 +1,5 @@
+## roles/ansible-role-pcp/defaults/main.yml
+# vim:ft=ansible:
+---
+pcp_agg_node: false
+...

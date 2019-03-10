@@ -1,0 +1,4 @@
+## roles/ansible-role-pcp/handlers/main.yml
+# vim:ft=ansible:
+---
+...

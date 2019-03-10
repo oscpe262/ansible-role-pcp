@@ -1,0 +1,39 @@
+## roles/ansible-role-pcp/tasks/main.yml
+# vim:ft=yaml.ansible:
+---
+- name: "Load OS vars"
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+
+- name: "Ensure PCP is installed"
+  package:
+    name: '{{ item }}'
+    state: present
+  with_items: '{{ pcp_pkgs }}'
+  notify: restart pmcd
+
+- name: "Ensure PCP webtools is installed"
+  package:
+    name: '{{ item }}'
+    state: present
+  with_items: '{{ pcp_web_pkgs }}'
+  when: pcp_web_host in ansible_hostname
+  notify: restart pmweb
+
+## TODO: Add firewall control, port 44321/tcp for all, 44323/tcp for web
+- name: "Allow {{ pcp_web_host }} to access logs"
+  template:
+    src: etc_pcp_pmcd_pmcd_conf.j2
+    dest: /etc/pcp/pmcd/pmcd.conf
+  notify: restart pmcd
+
+- name: "Add {{ pcp_hosts }} to be accessed"
+  template:
+    src: etc_pcp_pmlogger_control.j2
+    dest: /etc/pcp/pmlogger/control
+  when: pcp_web_host in ansible_hostname
+  notify: restart pmlogger, restart pmcd
+
+...
